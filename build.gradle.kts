@@ -1,37 +1,26 @@
 plugins {
-    id 'java-library'
-    // Enables publishing artifacts during build
-    id 'maven-publish'
+    java
+    `maven-publish`
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
+group = "com.registry_example"
+version = "0.0.1-SNAPSHOT"
+java.sourceCompatibility = JavaVersion.VERSION_17
 
-group 'com.registry_example'
-version '1.0.0'
-
-repositories {
-    mavenCentral()
-}
-
-// Configures the publishing
 publishing {
     repositories {
-        // The target repository
         maven {
-            // Choose whatever name you want
-            name = "GitHubPackages"
-            // The url of the repository, where the artifacts will be published
-            url = "https://maven.pkg.github.com/wrravelo-kueski/gradlelibrary"
+            name = "gradlelibrary"
+            url = uri("https://maven.pkg.github.com/wrravelo-kueski/gradlelibrary")
             credentials {
-                // The credentials (described in the next section)
-                username = project.findProperty("gpr.user")
-                password = project.findProperty("gpr.key")
+                username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
+                password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
             }
         }
     }
     publications {
-        gpr(MavenPublication) {
-            from(components.java)
+        register<MavenPublication>("gpr") {
+            from(components["java"])
         }
     }
 }
